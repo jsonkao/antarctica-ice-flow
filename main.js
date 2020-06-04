@@ -1,29 +1,22 @@
 import reglFn from 'regl';
 const regl = reglFn();
 
+import frag from './dots.frag';
+import vert from './dots.vert';
+
 regl.clear({
   color: [0, 0, 0, 1],
   depth: 1,
 });
 
-const drawTriangle = regl({
+const drawDots = regl({
   // Fragment shader sets the color for each fragment/pixel by setting the
   // gl_FragColor global on each call.
-  frag: `
-    precision mediump float;
-    uniform vec4 color;
-    void main() {
-      gl_FragColor = color;
-    }`,
+  frag,
 
   // Vertex shader positions each vertex by setting the gl_Position global
   // on each call.
-  vert: `
-    precision mediump float;
-    attribute vec2 position;
-    void main() {
-      gl_Position = vec4(position, 0, 1);
-    }`,
+  vert,
 
   // Here we define the vertex attributes for the above shader
   attributes: {
@@ -35,10 +28,14 @@ const drawTriangle = regl({
   uniforms: {
     // This defines the color of the triangle to be a dynamic variable
     color: regl.prop('color'),
+    pointWidth: regl.prop('pointWidth'),
   },
 
   // This tells regl the number of vertices to draw in this command
   count: 3,
+
+  // Set primitives to points
+  primitive: 'points',
 });
 
 // regl.frame() wraps requestAnimationFrame and also handles viewport changes
@@ -49,18 +46,19 @@ regl.frame(({ tick }) => {
     depth: 1,
   });
 
-  // draw a triangle using the command defined above
-  drawTriangle({
+  // draw dots using the command defined above
+  drawDots({
     color: [
       Math.cos(tick * 0.05),
       Math.sin(tick * 0.05),
       Math.cos(tick * 0.05),
       1,
     ],
-    position: regl.buffer([
-      [-1 * Math.cos(tick / 100), 0],
-      [Math.sin(tick / 100), -1],
-      [Math.sin(tick / 100), 1],
-    ]),
+    position: [
+      [-1 * Math.cos(tick / 100), 0.2],
+      [Math.sin(tick / 100), -0.8],
+      [Math.sin(tick / 100), 0.8],
+    ],
+    pointWidth: 100.0 + 50 * Math.cos(tick / 10),
   });
 });
