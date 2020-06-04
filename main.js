@@ -1,116 +1,76 @@
-import reglFn from 'regl';
-const regl = reglFn();
+import { range } from 'd3-array';
+import { randomNormal } from 'd3-random';
+import createREGL from 'regl';
+const regl = createREGL();
 
 import frag from './shaders/dots.frag';
 import vert from './shaders/dots.vert';
 
-// Helper function to create a random float between some defined range. This
-// is used to create some fake data. In a real setting, you would probably
-// use D3 to map data to display coordinates.
-function randomFromInterval(min, max) {
-  return Math.random() * (max - min + 1) + min;
-}
+const numPoints = 100000;
 
-// Helper function to create a random integer between some defined range.
-// Again, you would want to use D3 for mapping real data to display
-// coordinates.
-function randomIntFromInterval(min, max) {
-  return Math.floor(randomFromInterval(min, max));
-}
+// the size of the points we draw on screen
+const pointWidth = 4;
 
-// Some constants to use
-const MAX_WIDTH = document.documentElement.clientWidth;
-const MAX_HEIGHT = document.documentElement.clientHeight;
-const MAX_SPEED = 25;
-const POINT_SIZE = 10;
-const POINT_COUNT = 400;
+// dimensions of the viewport we are drawing in
+const width = window.innerWidth;
+const height = window.innerHeight;
 
-// Helper function to generate some fake data.
-// Each data point has an x and y and a 'speed'
-// value that indicates how fast it travels
-function createData(dataCount) {
-  const data = [];
-  for (let i = 0; i < dataCount; i++) {
-    data.push({
-      id: i,
-      speed: randomFromInterval(1, MAX_SPEED),
-      y: randomIntFromInterval(POINT_SIZE, MAX_HEIGHT),
-      x: 0,
-      size: randomIntFromInterval(POINT_SIZE, POINT_SIZE * 3),
-    });
-  }
-  return data;
-}
+// random number generator from d3-random
+const rng = randomNormal(0, 0.15);
 
-// Helper function, goes through each
-// element in the fake data and updates
-// its x position.
-function updateData(data) {
-  data.forEach(d => {
-    d.x += d.speed;
-    // reset x if its gone past max width
-    d.x = d.x > MAX_WIDTH ? 0 : d.x;
-  });
-}
+// create initial set of points
+const points = range(numPoints).map(_ => ({
+  x: (rng() * width) + (width / 2),
+  y: (rng() * height) + (height / 2),
+  color: [0, Math.random(), 0],
+}));
 
-regl.clear({
-  color: [0, 0, 0, 1],
-  depth: 1,
-});
-
-const drawDots = regl({
-  // Fragment shader sets the color for each fragment/pixel by setting the
-  // gl_FragColor global on each call.
+const drawPoints = regl({
   frag,
-
-  // Vertex shader positions each vertex by setting the gl_Position global
-  // on each call.
   vert,
 
   attributes: {
-    // There will be a position value for each point we pass in
-    position: (_, { points }) => points.map(p => [p.x, p.y]),
-
-    // pointWidth should also be an array
-    pointWidth: (_, { points }) => points.map(p => p.size),
+    // each of these gets mapped to a single entry for each of
+    // the points. this means the vertex shader will receive
+    // just the relevant value for a given point.
+    position: points.map(d => [d.x, d.y]),
+    color: points.map(d => d.color),
   },
 
   uniforms: {
-    // This defines the color of the triangle to be a dynamic variable
-    color: regl.prop('color'),
+    // by using `regl.prop` to pass these in, we can specify
+    // them as arguments to our drawPoints function
     pointWidth: regl.prop('pointWidth'),
 
-    stageWidth: regl.context('drawingBufferWidth'),
-    stageHeight: regl.context('drawingBufferHeight'),
+    // regl actually provides these as viewportWidth and
+    // viewportHeight but I am using these outside and I want
+    // to ensure they are the same numbers, so I am explicitly
+    // passing them in.
+    stageWidth: regl.prop('stageWidth'),
+    stageHeight: regl.prop('stageHeight'),
   },
 
-  // This tells regl the number of vertices to draw in this command
-  count: (_, { points }) => points.length,
+  // specify the number of points to draw
+  count: points.length,
 
-  // Set primitives to points
+  // specify that each vertex is a point (not part of a mesh)
   primitive: 'points',
 });
 
-const points = createData(POINT_COUNT);
-
-// regl.frame() wraps requestAnimationFrame and also handles viewport changes
-regl.frame(({ tick }) => {
-  // clear contents of the drawing buffer
+// start the regl draw loop
+regl.frame(() => {
+  // clear the buffer
   regl.clear({
-    color: [0, 0, 0, 0],
+    // background color (black)
+    color: [0, 0, 0, 1],
     depth: 1,
   });
 
-  updateData(points);
-
-  // draw dots using the command defined above
-  drawDots({
-    points,
-    color: [
-      Math.cos(tick * 0.05),
-      Math.sin(tick * 0.05),
-      Math.cos(tick * 0.05),
-      1,
-    ],
+  // draw the points using our created regl func
+  // note that the arguments are available via `regl.prop`.
+  drawPoints({ // we'll get to this function in a moment!
+    pointWidth,
+    stageWidth: width,
+    stageHeight: height,
   });
 });

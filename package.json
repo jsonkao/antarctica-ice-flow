@@ -4,6 +4,8 @@
     "dev": "parcel index.html"
   },
   "dependencies": {
+    "d3-array": "^2.4.0",
+    "d3-random": "^2.1.0",
     "regl": "^1.6.1"
   },
   "devDependencies": {
