@@ -1,0 +1,12 @@
+{
+  "name": "happy-little-trees",
+  "scripts": {
+    "dev": "parcel index.html"
+  },
+  "dependencies": {
+    "regl": "^1.6.1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
