@@ -1,23 +1,24 @@
 import reglFn from 'regl';
-
 const regl = reglFn();
 
 regl.clear({
   color: [0, 0, 0, 1],
-  depth: 1
-})
+  depth: 1,
+});
 
 const drawTriangle = regl({
-  // Shaders in regl are just strings.  You can use glslify or whatever you want
-  // to define them.  No need to manually create shader objects.
-  frag: glsl`
+  // Fragment shader sets the color for each fragment/pixel by setting the
+  // gl_FragColor global on each call.
+  frag: `
     precision mediump float;
     uniform vec4 color;
     void main() {
       gl_FragColor = color;
     }`,
 
-  vert: glsl`
+  // Vertex shader positions each vertex by setting the gl_Position global
+  // on each call.
+  vert: `
     precision mediump float;
     attribute vec2 position;
     void main() {
@@ -27,11 +28,7 @@ const drawTriangle = regl({
   // Here we define the vertex attributes for the above shader
   attributes: {
     // regl.buffer creates a new array buffer object
-    position: regl.buffer([
-      [-2, -2], // no need to flatten nested arrays, regl automatically
-      [4, -2], // unrolls them into a typedarray (default Float32)
-      [4, 4],
-    ]),
+    position: regl.prop('position'),
     // regl automatically infers sane defaults for the vertex attribute pointers
   },
 
@@ -45,7 +42,7 @@ const drawTriangle = regl({
 });
 
 // regl.frame() wraps requestAnimationFrame and also handles viewport changes
-regl.frame(({ time }) => {
+regl.frame(({ tick }) => {
   // clear contents of the drawing buffer
   regl.clear({
     color: [0, 0, 0, 0],
@@ -55,14 +52,15 @@ regl.frame(({ time }) => {
   // draw a triangle using the command defined above
   drawTriangle({
     color: [
-      Math.cos(time * 0.1),
-      Math.sin(time * 0.8),
-      Math.cos(time * 0.3),
+      Math.cos(tick * 0.05),
+      Math.sin(tick * 0.05),
+      Math.cos(tick * 0.05),
       1,
     ],
+    position: regl.buffer([
+      [-1 * Math.cos(tick / 100), 0],
+      [Math.sin(tick / 100), -1],
+      [Math.sin(tick / 100), 1],
+    ]),
   });
 });
-
-function glsl(x) {
-  return x;
-}
