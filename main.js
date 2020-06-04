@@ -19,8 +19,8 @@ function randomIntFromInterval(min, max) {
 }
 
 // Some constants to use
-const MAX_WIDTH = 2 * document.documentElement.clientWidth;
-const MAX_HEIGHT = 2 * document.documentElement.clientHeight;
+const MAX_WIDTH = document.documentElement.clientWidth;
+const MAX_HEIGHT = document.documentElement.clientHeight;
 const MAX_SPEED = 25;
 const POINT_SIZE = 10;
 const POINT_COUNT = 400;
