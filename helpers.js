@@ -10,7 +10,7 @@ export const height = window.innerHeight;
 
 // create initial set of points
 const numPoints = 10000;
-export const points = range(numPoints).map(_ => ({
+export const points = range(numPoints).map(() => ({
   tx: width / 2,
   ty: height / 2,
   colorEnd: [0, 0, 0],
@@ -33,10 +33,11 @@ export function blueNormalLayout(points) {
 
 // helper to layout points in a green fuzzy circle
 export function greenCircleLayout(points) {
+  const length = Math.min(height, width);
   const rng = randomNormal(0, 0.05);
   points.forEach((d, i) => {
-    d.tx = (rng() + Math.cos(i)) * (width / 2.5) + width / 2;
-    d.ty = (rng() + Math.sin(i)) * (height / 2.5) + height / 2;
+    d.tx = (rng() + Math.cos(i)) * (length / 2.5) + width / 2;
+    d.ty = (rng() + Math.sin(i)) * (length / 2.5) + length / 2;
     d.colorEnd = [0, Math.random(), 0]; // random amount of green
   });
 }

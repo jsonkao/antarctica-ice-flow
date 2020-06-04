@@ -21,12 +21,16 @@ vec2 normalizeCoords(vec2 position) {
               -2.0 * (position.y / stageHeight) + 1.0);
 }
 
+float easeInOutCubic(float x) {
+  return x < 0.5 ? 4.0 * x * x * x : 1.0 - pow(-2.0 * x + 2.0, 3.0) / 2.0;
+}
+
 void main() {
   // update the size of a point based on the prop pointWidth
   gl_PointSize = pointWidth;
 
   // number from 0 to 1 indicating how far through the animation this vertex is
-  float t = min(1.0, elapsed / duration);
+  float t = easeInOutCubic(elapsed / duration);
 
   // inteprolate position
   vec2 position = mix(positionStart, positionEnd, t);
