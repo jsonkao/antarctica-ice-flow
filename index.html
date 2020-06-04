@@ -7,23 +7,15 @@
         margin: 0;
       }
 
-      #canvas-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-
-      #canvas {
-        border: 1px solid black;
+      #glCanvas {
+        display: block;
+        margin: 0 auto;
       }
     </style>
   </head>
 
   <body>
-    <div id="canvas-container">
-      <canvas id="glCanvas" width="640" height="480"></canvas>
-    </div>
+    <canvas id="glCanvas" width="640" height="480"></canvas>
   </body>
 
   <script src="./main.js"></script>
