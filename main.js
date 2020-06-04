@@ -1,53 +1,47 @@
-import { range } from 'd3-array';
-import { randomNormal } from 'd3-random';
 import createREGL from 'regl';
 const regl = createREGL();
 
+import {
+  width,
+  height,
+  points,
+  blueNormalLayout,
+  greenCircleLayout,
+} from './helpers';
 import frag from './shaders/dots.frag';
 import vert from './shaders/dots.vert';
-
-const numPoints = 100000;
 
 // the size of the points we draw on screen
 const pointWidth = 4;
 
-// dimensions of the viewport we are drawing in
-const width = window.innerWidth;
-const height = window.innerHeight;
-
-// random number generator from d3-random
-const rng = randomNormal(0, 0.15);
-
-// create initial set of points
-const points = range(numPoints).map(_ => ({
-  x: (rng() * width) + (width / 2),
-  y: (rng() * height) + (height / 2),
-  color: [0, Math.random(), 0],
-}));
+function dataPropMap(func, property = 'points') {
+  return function (_, props) {
+    return props[property].map(func);
+  };
+}
 
 const drawPoints = regl({
   frag,
   vert,
 
+  // Attributes are only provided to the vertex shader. Each value gets mapped
+  // to a vertex being displayed
   attributes: {
-    // each of these gets mapped to a single entry for each of
-    // the points. this means the vertex shader will receive
-    // just the relevant value for a given point.
-    position: points.map(d => [d.x, d.y]),
-    color: points.map(d => d.color),
+    positionStart: dataPropMap(d => [d.sx, d.sy]),
+    positionEnd: dataPropMap(d => [d.tx, d.ty]),
+    colorStart: dataPropMap(d => d.colorStart),
+    colorEnd: dataPropMap(d => d.colorEnd),
   },
 
+  // Uniforms are constant during each frame rendered and are accessible
+  // in both frag andvert
   uniforms: {
-    // by using `regl.prop` to pass these in, we can specify
-    // them as arguments to our drawPoints function
-    pointWidth: regl.prop('pointWidth'),
+    pointWidth,
+    stageWidth: width,
+    stageHeight: height,
 
-    // regl actually provides these as viewportWidth and
-    // viewportHeight but I am using these outside and I want
-    // to ensure they are the same numbers, so I am explicitly
-    // passing them in.
-    stageWidth: regl.prop('stageWidth'),
-    stageHeight: regl.prop('stageHeight'),
+    duration: regl.prop('duration'), // animation duration
+    elapsed: ({ time }, { startTime = 0 }) => (time - startTime) * 1000,
   },
 
   // specify the number of points to draw
@@ -57,20 +51,53 @@ const drawPoints = regl({
   primitive: 'points',
 });
 
-// start the regl draw loop
-regl.frame(() => {
-  // clear the buffer
-  regl.clear({
-    // background color (black)
-    color: [0, 0, 0, 1],
-    depth: 1,
+const duration = 1500;
+
+const layouts = [blueNormalLayout, greenCircleLayout];
+let currentLayout = 0;
+
+function animate(setNewLayout) {
+  // Make previous end the new beginning
+  points.forEach(d => {
+    d.sx = d.tx;
+    d.sy = d.ty;
+    d.colorStart = d.colorEnd;
   });
 
-  // draw the points using our created regl func
-  // note that the arguments are available via `regl.prop`.
-  drawPoints({ // we'll get to this function in a moment!
-    pointWidth,
-    stageWidth: width,
-    stageHeight: height,
+  // Set the new end states
+  setNewLayout(points);
+
+  // Start an animation loop
+
+  let startTime = null;
+
+  const frameLoop = regl.frame(({ time }) => {
+    // Keep track of start time
+    if (startTime === null) {
+      startTime = time;
+    }
+
+    // clear the buffer, resetting background color to black
+    regl.clear({
+      color: [0, 0, 0, 1],
+      depth: 1,
+    });
+
+    // draw the points using our created regl func
+    drawPoints({
+      points,
+      duration,
+      startTime,
+    });
+    if (time - startTime > duration / 1000) {
+      frameLoop.cancel();
+      setTimeout(doNextAnimation, 500);
+    }
   });
-});
+}
+
+function doNextAnimation() {
+  animate(layouts[currentLayout++ % layouts.length]);
+}
+
+doNextAnimation();
