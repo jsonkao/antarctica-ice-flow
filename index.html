@@ -1,32 +1,30 @@
 <html>
+  <head>
+    <title>Happy Little Trees</title>
 
-<head>
-	<title>Happy Little Trees</title>
+    <style>
+      body {
+        margin: 0;
+      }
 
-	<style>
-		body {
-			margin: 0;
-		}
-		
-		#canvas-container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-		}
+      #canvas-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-		#canvas {
-			border: 1px dotted black;
-		}
-	</style>
-</head>
+      #canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
 
-<body>
-	<div id="canvas-container">
-		<canvas id="canvas" width="900" height="700"></canvas>
-	</div>
-</body>
+  <body>
+    <div id="canvas-container">
+      <canvas id="glCanvas" width="640" height="480"></canvas>
+    </div>
+  </body>
 
-<script src="./main.js"></script>
-
+  <script src="./main.js"></script>
 </html>

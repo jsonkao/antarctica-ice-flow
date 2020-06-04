@@ -1,10 +1,15 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+function main() {
+  const canvas = document.querySelector('#glCanvas');
+  const gl = canvas.getContext('webgl'); // Initialize the GL context
 
-const { offsetLeft, offsetTop } = canvas;
+  if (gl === null) {
+    return console.error('Unable to initialize WebGL.');
+  }
+  console.log('gl :>> ', gl);
+  // Set clear color to black, fully opaque
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  // Clear the color buffer with specified clear color
+  gl.clear(gl.COLOR_BUFFER_BIT);
+}
 
-canvas.addEventListener('click', ({ pageX, pageY }) => {
-  const branch = new Path2D();  
-  branch.rect(pageX - offsetLeft, pageY - offsetTop, 10 + Math.ceil(Math.pow(pageY, .6)) * 4, 4);
-  ctx.fill(branch);
-})
+window.onload = main;
