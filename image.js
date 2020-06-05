@@ -1,4 +1,4 @@
-import imageUrl from './images/ross-thick-move.png';
+import imageUrl from './images/ross-thin.png';
 import createREGL from 'regl';
 const regl = createREGL();
 
