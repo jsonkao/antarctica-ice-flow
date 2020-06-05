@@ -1,18 +1,25 @@
+import { range } from 'd3-array';
+import { randomNormal } from 'd3-random';
 import createREGL from 'regl';
 const regl = createREGL();
 
-import {
-  width,
-  height,
-  points,
-  blueNormalLayout,
-  greenCircleLayout,
-} from './helpers';
 import frag from './shaders/dots.frag';
 import vert from './shaders/dots.vert';
 
 // the size of the points we draw on screen
 const pointWidth = 4;
+
+// dimensions of the viewport we are drawing in
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+// create initial set of points
+const numPoints = 30000;
+const points = range(numPoints).map(() => ({
+  tx: width / 2,
+  ty: height / 2,
+  colorEnd: [0, 0, 0],
+}));
 
 function dataPropMap(func, property = 'points') {
   return function (_, props) {
@@ -102,3 +109,31 @@ function doNextAnimation() {
 }
 
 doNextAnimation();
+
+// A layout algorithm can be any function that sets the x and y attribute on our
+// point objects.
+
+const radius = Math.min(width, height);
+
+// Randomly (normally) places points around the origin.
+export function blueNormalLayout(points) {
+  const rng = randomNormal(0, 0.15);
+  points.forEach(d => {
+    // set the new x and y attributes
+    d.tx = rng() * radius + width / 2;
+    d.ty = rng() * radius + height / 2;
+
+    // blue-green color
+    d.colorEnd = [0, 0.5, 0.9];
+  });
+}
+
+// helper to layout points in a green fuzzy circle
+export function greenCircleLayout(points) {
+  const rng = randomNormal(0, 0.05);
+  points.forEach((d, i) => {
+    d.tx = (rng() + Math.cos(i)) * (radius / 2.5) + width / 2;
+    d.ty = (rng() + Math.sin(i)) * (radius / 2.5) + height / 2;
+    d.colorEnd = [0, Math.random(), 0]; // random amount of green
+  });
+}
