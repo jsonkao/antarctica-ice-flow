@@ -1,27 +1,25 @@
-#! /bin/csh -f
+set velocity = nasa_measures
 
-# set velocity = nasa_measures								# using nasa measures 450 m velocities
-
-# set filter = smooth4k
+set filter = smooth4k
 
 set model_dem_par =  larsenc_250.dem_par
 
 set thickness = bedmap2_thickness.geo	# bedmap2 data reprojected to larsenc_250.dem_par
 set surface = bedmap2_surface.geo
 
-set pixels = `gawk '{if($1 == "width:") printf("%d\n", $2)}' < $model_dem_par`
-set lines = `gawk '{if($1 == "nlines:") printf("%d\n", $2)}' < $model_dem_par`
+set pixels = `awk '{if($1 == "width:") printf("%d\n", $2)}' < $model_dem_par`
+set lines = `awk '{if($1 == "nlines:") printf("%d\n", $2)}' < $model_dem_par`
 
-set epost 	= `gawk '{if($1 == "post_east:")  printf("%d\n", $2)}' < $model_dem_par`
-set npost	= `gawk '{if($1 == "post_north:") printf("%d\n", $2)}' < $model_dem_par`
-set npost_pos	= `gawk '{if($1 == "post_north:") printf("%d\n", -$2)}' < $model_dem_par`
-set tl_easting	= `gawk '{if($1 == "corner_east:") printf("%d\n", $2)}' < $model_dem_par`
-set tl_northing	= `gawk '{if($1 == "corner_north:") printf("%d\n", $2)}' < $model_dem_par`
-set secant_lat	= `gawk '{if($1 == "PS_secant_lat:") printf("%d\n", $2)}'	 < $model_dem_par`
-set central_lon	= 0
+set epost = `awk '{if($1 == "post_east:")  printf("%d\n", $2)}' < $model_dem_par`
+set npost = `awk '{if($1 == "post_north:") printf("%d\n", $2)}' < $model_dem_par`
+set npost_pos = `awk '{if($1 == "post_north:") printf("%d\n", -$2)}' < $model_dem_par`
+set tl_easting = `awk '{if($1 == "corner_east:") printf("%d\n", $2)}' < $model_dem_par`
+set tl_northing = `awk '{if($1 == "corner_north:") printf("%d\n", $2)}' < $model_dem_par`
+set secant_lat = `awk '{if($1 == "PS_secant_lat:") printf("%d\n", $2)}'	 < $model_dem_par`
+set central_lon = 0
 
-set br_northing = `echo $tl_northing $npost $lines | gawk '{printf("%d\n", $1 + $2*$3)}'`
-set br_easting = `echo $tl_easting $epost $pixels | gawk '{printf("%d\n", $1 + $2*$3)}'`
+set br_northing = `echo $tl_northing $npost $lines | awk '{printf("%d\n", $1 + $2*$3)}'`
+set br_easting = `echo $tl_easting $epost $pixels | awk '{printf("%d\n", $1 + $2*$3)}'`
 set bl_northing = $br_northing
 set tr_easting  = $br_easting
 set tr_northing = $tl_northing
@@ -31,20 +29,30 @@ echo br_northing = $br_northing : br_easting = $br_easting
 echo pixels = $pixels : lines = $lines
 
 set inlet = CI
-#set inlet = whirlwind
+# set inlet = whirlwind
 
 # using borehole densities
-if($inlet == "CI") set density_in = lcis_density_summary_CI_120.mean.txt	# these are depth-mean densities from the borehole data
-if($inlet == "whirlwind") set density_in = lcis_density_summary_WI_70.mean.txt
+# these are depth-mean densities from the borehole data
+if($inlet == "CI") then
+	set density_in = lcis_density_summary_CI_120.mean.txt
+endif
+if($inlet == "whirlwind") then
+	set density_in = lcis_density_summary_WI_70.mean.txt
+endif
 
-set density_adjust = 1		# ie do adjust accumulated layers for borehole density
+# ie do adjust accumulated layers for borehole density
+set density_adjust = 1
 
 # density of accumulated snow
-set new_acc_density = 400 # 
+set new_acc_density = 400
 
 
-if($inlet == "CI") set start = Cabinet_Inlet_forward_flowline.ps.txt	
-if($inlet == "whirlwind") set start = Whirlwind_Inlet_forward_flowline.ps.txt	
+if($inlet == "CI") then
+	set start = Cabinet_Inlet_forward_flowline.ps.txt
+endif
+if($inlet == "whirlwind") then
+	set start = Whirlwind_Inlet_forward_flowline.ps.txt
+endif
 
 foreach field (25pc med 75pc)
 
@@ -147,7 +155,7 @@ if($field == "75pc") then
 	endif
 	
 	# may need to remove last few lines of $flow_dir/results_v5/velocity_mag.smb.vstrain.thick.sfc.$start where thickness and/or surface elevation run out.
-	gawk '{if(($7 != 0) && ($6 != "NaN")) print $0}' < velocity_mag.smb.vstrain.thick.sfc.$start:r:r:t > track.tmp
+	awk '{if(($7 != 0) && ($6 != "NaN")) print $0}' < velocity_mag.smb.vstrain.thick.sfc.$start:r:r:t > track.tmp
 	mv -f track.tmp velocity_mag.smb.vstrain.thick.sfc.$start:r:r:t
 	
 #$1 = easting (m)
@@ -265,43 +273,3 @@ if($field == "75pc") then
 			R CMD BATCH flow_acc.R >> flow_acc.R
 
 end
-
-
-
-
-#$1 = easting
-#$2 = northing
-#$3 = segment length
-#$4 = along flow velocity
-#$5 = smb rate
-#$6 = vstrain rate
-#$7 = thick
-#$8 = elev
-#$9 = cell residence time
-#$10 = smb per cell
-#$11 = accumulated time
-#$12 = accumulated distance
-#$13 = accumulated smb
-#$14 = accumulated z1
-#$15 = accumulated z2
-#$16 = accumulated z3
-#$17 = accumulated z4
-#$18 = accumulated z5
-#$19 = accumulated z6
-
-
-
-# etc
-
-# results.sub
-#$1 = thick
-#$2 = elev
-#$3 = accumulated time
-#$4 = accumulated distance
-#$5 = accumulated smb
-#$6 = accumulated z1
-#$7 = accumulated z2
-#$8 = accumulated z3
-#$9 = accumulated z4
-#$10 = accumulated z5
-
