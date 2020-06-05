@@ -9,14 +9,10 @@ let imageTexture;
 
 const image = new Image();
 image.src = imageUrl;
-image.addEventListener(
-  'load',
-  function () {
-    imageTexture = regl.texture(image);
-    main();
-  },
-  false,
-);
+image.onload = function () {
+  imageTexture = regl.texture(image);
+  main();
+};
 
 function main() {
   const drawImage = regl({
@@ -36,13 +32,6 @@ function main() {
   });
 
   regl.frame(({ time }) => {
-    // clear the buffer, resetting background color to black
-    regl.clear({
-      color: [255, 0, 0, 0],
-      depth: 1,
-    });
-
-    // draw the points using our created regl func
     drawImage({
       offset: time * 0.8,
     });
