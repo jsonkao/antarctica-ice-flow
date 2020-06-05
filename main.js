@@ -16,7 +16,7 @@ const pointWidth = 4;
 
 function dataPropMap(func, property = 'points') {
   return function (_, props) {
-    return props[property].map(func);
+    return regl.buffer(props[property].map(func));
   };
 }
 
@@ -24,8 +24,9 @@ const drawPoints = regl({
   frag,
   vert,
 
-  // Attributes are only provided to the vertex shader. Each value gets mapped
-  // to a vertex being displayed
+  // Attributes are only provided to the vertex shader.
+  // A vertex shader is executed `count` times. Each time, the next value from
+  // a specified buffer is pulled out and assigned to an attribute.
   attributes: {
     positionStart: dataPropMap(d => [d.sx, d.sy]),
     positionEnd: dataPropMap(d => [d.tx, d.ty]),
