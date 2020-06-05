@@ -1,4 +1,4 @@
-import imageUrl from './images/basic-paths.png';
+import imageUrl from './images/ross-thick-move.png';
 import createREGL from 'regl';
 const regl = createREGL();
 
@@ -31,9 +31,9 @@ function main() {
     count: 3,
   });
 
-  regl.frame(({ time }) => {
+  regl.frame(({ tick }) => {
     drawImage({
-      offset: time * 0.8,
+      offset: tick * 0.01,
     });
   });
 }

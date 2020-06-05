@@ -39,7 +39,11 @@ void main() {
   // saturation using V as the initial value. We then set V to 1 for a light
   // color. Now we can also easily control the hue.
   vec3 hsv = rgb2hsv(textureColor.rgb);
-  vec3 offsetHsv = vec3(0.0, mod(hsv[2] + offset, 1.0), 1.0);
 
-  gl_FragColor = vec4(hsv2rgb(offsetHsv), 1);
+  // Helpful hues: darkblue (207), lightblue (183)
+  vec3 color1 = vec3(207. / 360., mod(hsv[2] - offset, 1.0), 1.);
+  vec3 color2 = vec3(183. / 360., mod(hsv[2] - offset, 1.0), 1.);
+
+  // Convert back to rgb and then multiply blend
+  gl_FragColor = vec4(hsv2rgb(color1) * hsv2rgb(color2), 1);
 }
