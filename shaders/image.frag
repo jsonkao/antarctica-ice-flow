@@ -41,8 +41,8 @@ void main() {
   vec3 hsv = rgb2hsv(textureColor.rgb);
 
   // Helpful hues: darkblue (207), lightblue (183)
-  vec3 color1 = vec3(207. / 360., mod(hsv[2] - offset, 1.0), 1.);
-  vec3 color2 = vec3(183. / 360., mod(hsv[2] - offset, 1.0), 1.);
+  vec3 color1 = vec3(207. / 360., mod(hsv[2] + offset, 1.0), 1.);
+  vec3 color2 = vec3(183. / 360., mod(hsv[2] + offset, 1.0), 1.);
 
   // Convert back to rgb and then multiply blend
   gl_FragColor = vec4(hsv2rgb(color1) * hsv2rgb(color2), 1);
