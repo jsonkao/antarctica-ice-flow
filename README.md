@@ -1,5 +1,3 @@
-Experiments with Canvas and WebGL.
-
 ### Files
 
 #### `images/basic-path.png`
