@@ -1,5 +1,5 @@
 parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcelRequire,u="function"==typeof require&&require;function f(t,n){if(!r[t]){if(!e[t]){var i="function"==typeof parcelRequire&&parcelRequire;if(!n&&i)return i(t,!0);if(o)return o(t,!0);if(u&&"string"==typeof t)return u(t);var c=new Error("Cannot find module '"+t+"'");throw c.code="MODULE_NOT_FOUND",c}p.resolve=function(r){return e[t][1][r]||r},p.cache={};var l=r[t]=new f.Module(t);e[t][0].call(l.exports,p,l,l.exports,this)}return r[t].exports;function p(e){return f(p.resolve(e))}}f.isParcelRequire=!0,f.Module=function(e){this.id=e,this.bundle=f,this.exports={}},f.modules=e,f.cache=r,f.parent=o,f.register=function(r,t){e[r]=[function(e,r){r.exports=t},{}]};for(var c=0;c<t.length;c++)try{f(t[c])}catch(e){i||(i=e)}if(t.length){var l=f(t[t.length-1]);"object"==typeof exports&&"undefined"!=typeof module?module.exports=l:"function"==typeof define&&define.amd?define(function(){return l}):n&&(this[n]=l)}if(parcelRequire=f,i)throw i;return f}({"aQXZ":[function(require,module,exports) {
-module.exports="/basic-paths.19164147.png";
+module.exports="basic-paths.19164147.png";
 },{}],"EBub":[function(require,module,exports) {
 var define;
 var global = arguments[3];
@@ -11,4 +11,4 @@ module.exports="precision mediump float;\n#define GLSLIFY 1\nattribute vec2 posi
 },{}],"pVzr":[function(require,module,exports) {
 "use strict";var e=u(require("./images/basic-paths.png")),r=u(require("regl")),t=u(require("./shaders/image.frag")),a=u(require("./shaders/image.vert"));function u(e){return e&&e.__esModule?e:{default:e}}var f,i=(0,r.default)(),s=new Image;function n(){var e=i({frag:t.default,vert:a.default,attributes:{position:[-2,0,0,-2,2,2]},uniforms:{texture:f,offset:i.prop("offset")},count:3});i.frame(function(r){var t=r.tick;e({offset:.01*t})})}s.src=e.default,s.onload=function(){f=i.texture(s),n()};
 },{"./images/basic-paths.png":"aQXZ","regl":"EBub","./shaders/image.frag":"OrH3","./shaders/image.vert":"qEe8"}]},{},["pVzr"], null)
-//# sourceMappingURL=/image.a4a5d0a9.js.map
+//# sourceMappingURL=image.a4a5d0a9.js.map
