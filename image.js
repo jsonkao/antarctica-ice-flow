@@ -21,6 +21,7 @@ function main() {
     vert,
 
     attributes: {
+      // Draws a triangle that covers the whole clip space
       position: [-2, 0, 0, -2, 2, 2],
     },
 
