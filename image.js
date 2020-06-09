@@ -23,6 +23,7 @@ function main() {
     // attributes are per-vertex parameters
     attributes: {
       // Draws a triangle that covers the whole clip space
+      // (it doesn't actually; these are further transformed in vertex shader)
       position: [-2, 0, 0, -2, 2, 2],
     },
 
