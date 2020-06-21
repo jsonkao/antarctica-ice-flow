@@ -28,6 +28,8 @@ void main() {
 
   if (textureColor.a != 1.0) // Alpha is either 0 or 1
     discard;
+  // For later reference: boolean varyings can be handled with step():
+  // > https://twitter.com/Rich_Harris/status/1178038344418254853
 
   // The input image is grayscale, which means R = G = B. To cycle each pixel
   // through the grayscale, we could equally offset each color component.

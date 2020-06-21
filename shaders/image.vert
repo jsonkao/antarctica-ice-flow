@@ -1,5 +1,7 @@
 precision mediump float;
 attribute vec2 position;
+
+// varyings are per-fragment (or per-pixel) parameters: they vary from pixels to pixels.
 varying vec2 uv;
 
 void main() {

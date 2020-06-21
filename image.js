@@ -23,10 +23,14 @@ function main() {
     frag,
     vert,
 
+    // attributes are per-vertex parameters
     attributes: {
+      // Draws a triangle that covers the whole clip space
+      // (it doesn't actually; these are further transformed in vertex shader)
       position: [-2, 0, 0, -2, 2, 2],
     },
 
+    // uniforms are per-primitive parameters (constant during an entire draw call)
     uniforms: {
       texture: imageTexture,
       offset: regl.prop('offset'),
