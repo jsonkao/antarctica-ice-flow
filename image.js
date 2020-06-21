@@ -3,6 +3,9 @@ import imageUrl from './images/basic-paths.png';
 import createREGL from 'regl';
 const regl = createREGL();
 
+import dat from './20200123.dat';
+// console.log('dat :>> ', dat);
+
 import frag from './shaders/image.frag';
 import vert from './shaders/image.vert';
 
@@ -11,7 +14,7 @@ let imageTexture;
 const image = new Image();
 image.src = imageUrl;
 image.onload = function () {
-  imageTexture = regl.texture(image);
+  imageTexture = regl.texture({ data: image, flipY: false });
   main();
 };
 
