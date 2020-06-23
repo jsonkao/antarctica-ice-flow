@@ -1,6 +1,3 @@
-### Files
+**[Observable Notebook](https://observablehq.com/@jsonkao/animating-ice-flow-in-antarctica)**
 
-#### `images/basic-path.png`
-
-- Source: Derek Watkin's [blog post](http://dwtkns.com/posts/flowing-ice.html)
-- Image Address: http://dwtkns.com/posts/images/2017-05-21-flowing-ice/basic-paths.png
+Images by Jeremy White via Derek Watkin's [blog post](http://dwtkns.com/posts/flowing-ice.html).
